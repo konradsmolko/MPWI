@@ -1,21 +1,65 @@
-﻿// LAB 2.cpp : Ten plik zawiera funkcję „main”. W nim rozpoczyna się i kończy wykonywanie programu.
+﻿// MPWI_LAB2.cpp : Defines the entry point for the console application.
 //
 
 #include "pch.h"
-#include <iostream>
+#include <math.h>
+#include <stdio.h>
+#include <Windows.h>
+#include <ctime>
 
-int main()
-{
-    std::cout << "Hello World!\n"; 
+extern "C" unsigned int rand_asm(char p, char q, time_t seed, unsigned int invoc);
+
+void zadanie1() {
+	unsigned int N = 100000, A = 69069, X_0 = 15, C = 1, M = INT_MAX;
+	unsigned int X = X_0;
+
+	int* rozklad = (int*)calloc(10, sizeof(int));
+	for (unsigned int i = 0; i <= N; i++)
+	{
+		X = (A*X + C) % M;
+		char indeks = (char)floor(10 * (double)X / M);
+		rozklad[indeks]++;
+	}
+
+	printf("Rozklad liczb pseudolosowych w zadaniu 1:\n");
+	for (int i = 0; i < 10; i++)
+	{
+		printf("%d: %d\n", i, rozklad[i]);
+	}
 }
 
-// Uruchomienie programu: Ctrl + F5 lub menu Debugowanie > Uruchom bez debugowania
-// Debugowanie programu: F5 lub menu Debugowanie > Rozpocznij debugowanie
+void zadanie2() {
+	// b_i = b_i-p xor b_i-q
+	// Z jakiegoś powodu po kilku iteracjach wartość X się zeruje???
+	const char p = 7;
+	const char q = 3;
 
-// Porady dotyczące rozpoczynania pracy:
-//   1. Użyj okna Eksploratora rozwiązań, aby dodać pliki i zarządzać nimi
-//   2. Użyj okna programu Team Explorer, aby nawiązać połączenie z kontrolą źródła
-//   3. Użyj okna Dane wyjściowe, aby sprawdzić dane wyjściowe kompilacji i inne komunikaty
-//   4. Użyj okna Lista błędów, aby zobaczyć błędy
-//   5. Wybierz pozycję Projekt > Dodaj nowy element, aby utworzyć nowe pliki kodu, lub wybierz pozycję Projekt > Dodaj istniejący element, aby dodać istniejące pliku kodu do projektu
-//   6. Aby w przyszłości ponownie otworzyć ten projekt, przejdź do pozycji Plik > Otwórz > Projekt i wybierz plik sln
+	unsigned int N = 100000, X, M = UINT_MAX;
+	time_t seed;
+	time(&seed);
+
+	int* rozklad = (int*)calloc(10, sizeof(int));
+	for (unsigned int i = 0; i < N; i++)
+	{
+		X = rand_asm(p, q, seed, i);
+
+		char indeks = (char)floor(10 * (double)X / M);
+		rozklad[indeks]++;
+	}
+
+	printf("Rozklad liczb pseudolosowych w zadaniu 2:\n");
+	for (int i = 0; i < 10; i++)
+	{
+		printf("%d: %d\n", i, rozklad[i]);
+	}
+}
+
+int main() {
+	/*
+	zadanie1();
+	system("pause");
+	*/
+	zadanie2();
+	system("pause");
+	return 0;
+}
